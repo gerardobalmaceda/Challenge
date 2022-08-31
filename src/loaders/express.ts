@@ -27,7 +27,7 @@ export default ({ app }: { app: Application }) => {
 
   app.use(express.json());
   app.use(express.urlencoded({ extended: false }));
-
+  
   app.use(conf.api.prefix, routes());
 
   app.use((req, res, next) => {

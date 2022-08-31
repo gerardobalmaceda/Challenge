@@ -6,22 +6,21 @@ const UserSchema = new Schema<IUser>(
   {
     nombre: { type: String },
     apellido: { type: String },
-    dni: {type: Number},
-    nacimiento: { type: Date },
+    dni: { type: Number },
+    nacimiento: { type: String },
     area: { type: String },
     legajo: {
       type: String,
     },
-    rol: [
-      {
-        type: String,
-        required: true,
-        enum: ["Gerente", "Supervisor", "Representante"],
-      },
-    ],
-    dniJefe: {Type: Number},
-    gerencia: {Type: String},
-    sector: {Type: String},
+    rol: {
+      type: String,
+      required: true,
+      enum: ["Gerente", "Supervisor", "Representante"],
+    },
+
+    dniJefe: { Type: Number },
+    gerencia: { Type: String },
+    sector: { Type: String },
     salt: { type: String, hide: true },
     hash: { type: String, hide: true },
   },
