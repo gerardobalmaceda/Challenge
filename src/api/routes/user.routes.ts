@@ -14,5 +14,7 @@ export default (app: Router) => {
     UserController.uploadCsv
   );
 
+  route.get("/export", UserController.exportUsers);
+
   app.use(errors());
 };

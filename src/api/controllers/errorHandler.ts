@@ -1,6 +1,5 @@
-import ErrorCreator from "../../services/helpers/errorCreator";
 
-const ErrorHandler = (err: ErrorCreator) => {
+const ErrorHandler = (err: any) => {
   let error = {
     msg: err.msg || "INTERNAL SERVER ERROR",
     stCode: 500,
@@ -13,6 +12,11 @@ const ErrorHandler = (err: ErrorCreator) => {
       isInternal: false,
     };
   }
+  if (err.name === 'BulkWriteError' && err.code === 11000) {
+		error.msg = `${err.writeErrors[0].err.errmsg}`;
+		error.stCode = 400;
+		error.isInternal = false;
+	}
   if (error.isInternal) console.log("INTERNAL ERROR ", err);
 
   return error;
