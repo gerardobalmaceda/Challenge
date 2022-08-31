@@ -1,7 +1,9 @@
 import XLSX from "xlsx";
-import { IUser } from "../interfaces/IUser";
 import { userModel } from "../db/models/index";
 import ErrorCreator from "./helpers/errorCreator";
+import { IUser } from "../interfaces/IUser";
+import { calculateAge } from "./helpers/functions";
+import { exportCsv } from "./helpers/uploader";
 export const upalodCvs = async (path: string) => {
   try {
     const workBook = XLSX.readFile(path);
@@ -10,7 +12,6 @@ export const upalodCvs = async (path: string) => {
       workBook.Sheets[workBookSheets[0]],
       { raw: false }
     )) as any;
-
     let dataToInsert: Object[] = [];
     dataExcel.forEach(
       (element: {
@@ -37,16 +38,49 @@ export const upalodCvs = async (path: string) => {
         });
       }
     );
-
     const data = await userModel.insertMany(dataToInsert);
     if (!data) {
-      return new ErrorCreator(
+      throw new ErrorCreator(
         "Se produjo un error durante la carga, intentelo nuevamente por favor",
         500
       );
     }
-    return dataToInsert;
+    return data;
   } catch (error) {
     throw error;
   }
+};
+
+export const exportUsers = async () => {
+  try {
+    const users = await userModel.find();
+    let dataToReturn: Object[] = [];
+    users.forEach((user: Partial<IUser>) => {
+      const date = new Date();
+      const year = date.getFullYear();
+      const month = date.getMonth() + 1;
+      const day = date.getDate();
+      const birtdayYear = user.nacimiento.split("/");
+      let age = year - parseInt(birtdayYear[2]);
+      var birthDayMont = month - parseInt(birtdayYear[1]);
+
+      if (
+        birthDayMont < 0 ||
+        (birthDayMont === 0 && day < parseInt(birtdayYear[0]))
+      ) {
+        age--;
+      }
+      dataToReturn.push({
+        "Apellido y Nombre": `${user.nombre} ${user.apellido}`,
+        legajo: user.legajo,
+        dni: user.dni,
+        rol: user.rol,
+        gerencia: user.gerencia,
+        sector: user.sector,
+        edad: age,
+      });
+    });
+    await exportCsv(dataToReturn);
+    return dataToReturn;
+  } catch (error) {}
 };
