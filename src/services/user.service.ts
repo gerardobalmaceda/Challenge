@@ -1,4 +1,5 @@
 import XLSX from "xlsx";
+import mongoose from "mongoose";
 import { userModel } from "../db/models/index";
 import ErrorCreator from "./helpers/errorCreator";
 import { IUser } from "../interfaces/IUser";
@@ -81,6 +82,52 @@ export const exportUsers = async () => {
     });
     await exportCsv(dataToReturn);
     return "Email enviado con éxito, por favor controle su bandeja de entrada";
+  } catch (error) {
+    throw error;
+  }
+};
+export const create = async (data: Partial<IUser>) => {
+  try {
+    const createUser = await userModel.create(data);
+    return createUser;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getAll = async () => {
+  try {
+    const data = await userModel.find();
+    return data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const update = async (id: string, data: Partial<IUser>) => {
+  try {
+    const update = await userModel.findByIdAndUpdate(
+      mongoose.Types.ObjectId(id),
+      data,
+      { new: true }
+    );
+    return update;
+  } catch (error) {
+    throw error;
+  }
+};
+export const deleteUser = async (id: string) => {
+  try {
+    const update = await userModel.findByIdAndDelete(
+      mongoose.Types.ObjectId(id)
+    );
+    if (!update) {
+      throw new ErrorCreator(
+        "No se puedo eliminar el usuario, verifique los datos ingresados por favor",
+        404
+      );
+    }
+    return "Usuario eliminado con éxito";
   } catch (error) {
     throw error;
   }
