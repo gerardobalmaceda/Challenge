@@ -2,7 +2,6 @@ import XLSX from "xlsx";
 import { userModel } from "../db/models/index";
 import ErrorCreator from "./helpers/errorCreator";
 import { IUser } from "../interfaces/IUser";
-import { calculateAge } from "./helpers/functions";
 import { exportCsv } from "./helpers/uploader";
 export const upalodCvs = async (path: string) => {
   try {
@@ -81,6 +80,8 @@ export const exportUsers = async () => {
       });
     });
     await exportCsv(dataToReturn);
-    return dataToReturn;
-  } catch (error) {}
+    return "Email enviado con éxito, por favor controle su bandeja de entrada";
+  } catch (error) {
+    throw error;
+  }
 };
