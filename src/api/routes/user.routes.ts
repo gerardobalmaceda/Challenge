@@ -8,6 +8,14 @@ const route = Router();
 export default (app: Router) => {
   app.use("/user", route);
 
+  route.post("/", UserController.create);
+
+  route.get("/", UserController.getAll);
+
+  route.put("/:id", UserController.update);
+
+  route.delete("/:id", UserController.deleteUser);
+
   route.post(
     "/upload-csv",
     csvUploader.single("data"),

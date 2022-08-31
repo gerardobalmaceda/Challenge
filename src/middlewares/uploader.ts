@@ -4,7 +4,6 @@ import ErrorCreator from '../services/helpers/errorCreator';
 
 
 export const csvUploader = multer({
-	limits: { fileSize: 1024 * 1024 * 5 },
 	storage: multer.diskStorage({
 		destination: (req, file, cb) => {
 			cb(null, 'public/');
