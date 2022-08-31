@@ -1,11 +1,9 @@
 import XLSX from "xlsx";
-import fs from "fs";
 import { userModel } from "../db/models/index";
 import ErrorCreator from "./helpers/errorCreator";
 import { IUser } from "../interfaces/IUser";
-import { Document } from "mongoose";
-import { globalAgent } from "https";
 import { calculateAge } from "./helpers/functions";
+import { exportCsv } from "./helpers/uploader";
 export const upalodCvs = async (path: string) => {
   try {
     const workBook = XLSX.readFile(path);
@@ -57,8 +55,21 @@ export const exportUsers = async () => {
   try {
     const users = await userModel.find();
     let dataToReturn: Object[] = [];
-    users.forEach(async (user: Partial<IUser>) => {
-      let age = await calculateAge(user.nacimiento);
+    users.forEach((user: Partial<IUser>) => {
+      const date = new Date();
+      const year = date.getFullYear();
+      const month = date.getMonth() + 1;
+      const day = date.getDate();
+      const birtdayYear = user.nacimiento.split("/");
+      let age = year - parseInt(birtdayYear[2]);
+      var birthDayMont = month - parseInt(birtdayYear[1]);
+
+      if (
+        birthDayMont < 0 ||
+        (birthDayMont === 0 && day < parseInt(birtdayYear[0]))
+      ) {
+        age--;
+      }
       dataToReturn.push({
         "Apellido y Nombre": `${user.nombre} ${user.apellido}`,
         legajo: user.legajo,
@@ -69,7 +80,7 @@ export const exportUsers = async () => {
         edad: age,
       });
     });
+    await exportCsv(dataToReturn);
     return dataToReturn;
   } catch (error) {}
 };
-
