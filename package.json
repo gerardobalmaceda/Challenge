@@ -4,7 +4,6 @@
     "description": "",
     "main": "index.js",
     "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1",
         "windows": "cross-env NODE_ENV=development && nodemon",
         "dev": "export NODE_ENV=development && nodemon",
         "build": "tsc",
@@ -16,8 +15,6 @@
     },
     "dependencies": {
         "@sendgrid/mail": "^7.7.0",
-        "bcrypt": "^5.0.1",
-        "bcryptjs": "^2.4.3",
         "celebrate": "^13.0.3",
         "compression": "^1.7.4",
         "cookie-parser": "^1.4.6",
@@ -34,7 +31,6 @@
         "xlsx": "^0.18.5"
     },
     "devDependencies": {
-        "@types/bcryptjs": "^2.4.2",
         "@types/compression": "^1.7.0",
         "@types/cookie-parser": "^1.4.2",
         "@types/cors": "^2.8.7",

@@ -4,6 +4,12 @@ import { userModel } from "../db/models/index";
 import ErrorCreator from "./helpers/errorCreator";
 import { IUser } from "../interfaces/IUser";
 import { exportCsv } from "./helpers/uploader";
+
+/**
+ * @param path  De la Request se obtiene el objeto file generado por el middleware multer en el cual una de sus key
+ * contiene la ubicación del archivo subido.
+ * @return Array de objetos con los usuarios insertados en la base de datos a partir del excel.
+ */
 export const upalodCvs = async (path: string) => {
   try {
     const workBook = XLSX.readFile(path);
@@ -51,6 +57,9 @@ export const upalodCvs = async (path: string) => {
   }
 };
 
+/**
+ * @return Mensaje de éxito en caso de no haberse producido ningún error.
+ */
 export const exportUsers = async () => {
   try {
     const users = await userModel.find();
@@ -86,15 +95,30 @@ export const exportUsers = async () => {
     throw error;
   }
 };
+
+/**
+ * @param data Objeto con los datos a ingresar en la base de datos del usuario a crear.
+ * @return Objeto con la información del usuario insertado en la base de datos
+ */
 export const create = async (data: Partial<IUser>) => {
   try {
     const createUser = await userModel.create(data);
+    if (!createUser) {
+      throw new ErrorCreator(
+        "Se produjo un error al crear el usuario, intentelo nuevamente por favor.",
+        500
+      );
+    }
     return createUser;
   } catch (error) {
     throw error;
   }
 };
 
+/**
+ * 
+ * @return Array de objetos con los usuarios existentes en la base de datos.
+ */
 export const getAll = async () => {
   try {
     const data = await userModel.find();
@@ -104,6 +128,11 @@ export const getAll = async () => {
   }
 };
 
+/**
+ * @param id Mongo Id del usuario a actualizar.
+ * @param data Objeto con la información a actualizar del usuario.
+ * @returns Objeto con la información del usuario actualizada.
+ */
 export const update = async (id: string, data: Partial<IUser>) => {
   try {
     const update = await userModel.findByIdAndUpdate(
@@ -116,6 +145,11 @@ export const update = async (id: string, data: Partial<IUser>) => {
     throw error;
   }
 };
+
+/**
+ * @param id Mongo Id del usuario a actualizar.
+ * @returns Mensaje de éxito en caso de no haberse producido ningún error. 
+ */
 export const deleteUser = async (id: string) => {
   try {
     const update = await userModel.findByIdAndDelete(
