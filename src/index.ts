@@ -2,6 +2,11 @@ import conf from "./config";
 import express from "express";
 import connection from "./db/connection";
 
+/**
+ * Se Crea la funcion encargada de inicializar el servidor express.
+ * Luego se importa el archivo index.ts del directorio loaders el cual tiene la configuraciones que utilizara express.
+ * El puerto en el que trabajará el servidor se lo pasa como variable de entorno.
+ */
 async function startServer() {
   const app = express();
 
