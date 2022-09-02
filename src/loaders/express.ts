@@ -25,7 +25,7 @@ export default ({ app }: { app: Application }) => {
   // Se cargan las rutas API
   app.use(conf.api.prefix, routes());
 
-  // Captura error cuando no se encuentra una ruta y se lo envía al error creator
+  // Captura error cuando no se encuentra una ruta.
   app.use((req, res, next) => {
     next(new ErrorCreator('ROUTE NOT FOUND', 404, false));
   });
