@@ -1,7 +1,7 @@
 import { errors } from "celebrate";
 import { Router } from "express";
 import { celebrate } from "celebrate";
-import { csvUploader } from "../../middlewares/uploader";
+import { fileUploader } from "../../middlewares/uploader";
 import * as UserController from "../controllers/user.controller";
 import { id_mongo_params, user_schema } from "../validations";
 
@@ -38,7 +38,7 @@ export default (app: Router) => {
 
   route.post(
     "/upload-csv",
-    csvUploader.single("data"),
+    fileUploader.single("data"),
     UserController.uploadCsv
   );
 

@@ -2,6 +2,7 @@ import XLSX from "xlsx";
 import sgMail from "@sendgrid/mail";
 import fs from "fs";
 import conf from "../../config";
+import { IUserExport } from "../../interfaces/IUser";
 
 /**
  *
@@ -9,7 +10,7 @@ import conf from "../../config";
  * @returns Array de objetos con los valores obtenidos del excel.
  */
 
-export const upalodCvs = async (path: string) => {
+export const uploadFile = async (path: string) => {
   try {
     const workBook = XLSX.readFile(path);
     const workBookSheets = workBook.SheetNames;
@@ -26,7 +27,7 @@ export const upalodCvs = async (path: string) => {
  * @param users -Array de objetos que contiene los usuarios.
  * @returns 
  */
-export const exportFile = async (users: Object[]) => {
+export const exportFile = async (users: Partial<IUserExport>[]) => {
   try {
     const workSheet = XLSX.utils.json_to_sheet(users);
     const workBook = XLSX.utils.book_new();

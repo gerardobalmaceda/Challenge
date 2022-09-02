@@ -1,7 +1,7 @@
 import multer from "multer";
 import fs from "fs";
 
-export const csvUploader = multer({
+export const fileUploader = multer({
   storage: multer.diskStorage({
     destination: (req, file, cb) => {
       if (!fs.existsSync("public/")) {
