@@ -15,15 +15,7 @@ export default ({ app }: { app: Application }) => {
 	 */
   app.use(morgan("dev"));
   app.enable("trust proxy");
-  app.use(
-    cors({
-      credentials: true,
-      origin: [
-        conf.client.url,
-      ],
-      methods: ["GET", "POST", "PUT", "DELETE"],
-    })
-  );
+  
   app.use(helmet());
   app.use(compression());
   app.use(cookieParser());

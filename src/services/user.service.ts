@@ -142,6 +142,12 @@ export const update = async (id: string, data: Partial<IUser>) => {
       data,
       { new: true }
     );
+    if (!update) {
+      throw new ErrorCreator(
+        "Se produjo un error al actualizar el usuario, verifique la información ingresada.",
+        400
+      );
+    }
     return update;
   } catch (error) {
     throw error;
@@ -160,7 +166,7 @@ export const deleteUser = async (id: string) => {
     if (!update) {
       throw new ErrorCreator(
         "No se puedo eliminar el usuario, verifique los datos ingresados por favor",
-        404
+        400
       );
     }
     return { message: "Usuario eliminado con éxito" };
