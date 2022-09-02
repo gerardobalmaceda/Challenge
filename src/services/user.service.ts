@@ -1,4 +1,3 @@
-import XLSX from "xlsx";
 import mongoose from "mongoose";
 import { userModel } from "../db/models/index";
 import ErrorCreator from "./helpers/errorCreator";
