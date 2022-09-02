@@ -40,7 +40,7 @@ export const exportFile = async (users: Partial<IUserExport>[]) => {
   }
 };
 /**
- * Se pasan como variables de entorno los parámetros debido a que en el modelo utilizado como ejemplo los usuarios no possen email.
+ * Se pasan como variables de entorno los parámetros debido a que en el modelo utilizado como ejemplo los usuarios no poseen email.
  * @param api_key -  Se lo pasa como variable de entorno y especifica la key generada en sendgrid para poder utilizar su servicio.
  * @param sender - Se lo pasa como variable de entorno y especifica quién es el emisor del email.
  * @param subject - Se lo pasa como variable de entorno y especifica a quién se enviará el email.
