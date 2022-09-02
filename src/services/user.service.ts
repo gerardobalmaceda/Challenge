@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 import { userModel } from "../db/models/index";
 import ErrorCreator from "./helpers/errorCreator";
 import { IUser, IUserCarga, IUserExport } from "../interfaces/IUser";
-import { exportCsv } from "./helpers/uploader";
+import { exportFile } from "./helpers/uploader";
 
 /**
  * @param path  De la Request se obtiene el objeto file generado por el middleware multer en el cual una de sus key
@@ -88,7 +88,7 @@ export const exportUsers = async () => {
         edad: age,
       });
     });
-    await exportCsv(usersExport);
+    await exportFile(usersExport);
     return {
       message:
         "Email enviado con éxito, por favor controle su bandeja de entrada",
