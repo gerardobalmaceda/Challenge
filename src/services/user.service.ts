@@ -2,7 +2,7 @@ import XLSX from "xlsx";
 import mongoose from "mongoose";
 import { userModel } from "../db/models/index";
 import ErrorCreator from "./helpers/errorCreator";
-import { IUser, IUserCarga, IUserExport } from "../interfaces/IUser";
+import { IUser, IUserUpload, IUserExport } from "../interfaces/IUser";
 import { exportFile } from "./helpers/fileManager";
 
 /**
@@ -19,7 +19,7 @@ export const uploadFile = async (path: string) => {
       { raw: false }
     )) as any;
     let users: Partial<IUser>[] = [];
-    dataExcel.forEach((user: IUserCarga) => {
+    dataExcel.forEach((user: IUserUpload) => {
       users.push({
         nombre: user.Nombre,
         apellido: user.Apellido,
@@ -165,7 +165,7 @@ export const deleteUser = async (id: string) => {
     );
     if (!update) {
       throw new ErrorCreator(
-        "No se puedo eliminar el usuario, verifique los datos ingresados por favor",
+        "No se pudo eliminar el usuario, verifique los datos ingresados por favor",
         400
       );
     }
