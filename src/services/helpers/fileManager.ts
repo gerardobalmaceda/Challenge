@@ -7,7 +7,7 @@ import { IUserExport } from "../../interfaces/IUser";
 /**
  *
  * @param path - Ubicación del archivo de excel subido mediante el middleware multer
- * @returns Array de objetos con los valores obtenidos del excel.
+ * @return Array de objetos con los valores obtenidos del excel.
  */
 
 export const uploadFile = async (path: string) => {
@@ -44,7 +44,7 @@ export const exportFile = async (users: Partial<IUserExport>[]) => {
  * @param api_key -  Se lo pasa como variable de entorno y especifica la key generada en sendgrid para poder utilizar su servicio.
  * @param sender - Se lo pasa como variable de entorno y especifica quién es el emisor del email.
  * @param subject - Se lo pasa como variable de entorno y especifica a quién se enviará el email.
- * @returns Se retorna un booleando con el valor true en caso de que el envío del email haya sido exitoso.
+ * @return Se retorna un booleando con el valor true en caso de que el envío del email haya sido exitoso.
  */
 const sendEmail = async () => {
   try {
