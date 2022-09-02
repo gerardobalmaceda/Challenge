@@ -39,7 +39,7 @@ export default (app: Router) => {
   route.post(
     "/upload-csv",
     fileUploader.single("data"),
-    UserController.uploadCsv
+    UserController.uploadFile
   );
 
   route.get("/export", UserController.exportUsers);

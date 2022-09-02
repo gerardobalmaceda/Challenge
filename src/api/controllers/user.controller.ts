@@ -8,13 +8,13 @@ import * as UserServices from "../../services/user.service";
  * contiene la ubicación del archivo subido.
  * @return En caso de éxito un json con la información obtenieda del excel con el códido de respuesta HTTP 201
  */
-export const uploadCsv = async (
+export const uploadFile = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    const data = await UserServices.upalodCsv(req.file.path);
+    const data = await UserServices.uploadFile(req.file.path);
     res.status(201).json(data);
   } catch (error) {
     next(error);

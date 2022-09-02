@@ -3,14 +3,14 @@ import mongoose from "mongoose";
 import { userModel } from "../db/models/index";
 import ErrorCreator from "./helpers/errorCreator";
 import { IUser, IUserCarga, IUserExport } from "../interfaces/IUser";
-import { exportFile } from "./helpers/uploader";
+import { exportFile } from "./helpers/fileManager";
 
 /**
  * @param path  De la Request se obtiene el objeto file generado por el middleware multer en el cual una de sus key
  * contiene la ubicación del archivo subido.
  * @return Array de objetos con los usuarios insertados en la base de datos a partir del excel.
  */
-export const upalodCsv = async (path: string) => {
+export const uploadFile = async (path: string) => {
   try {
     const workBook = XLSX.readFile(path);
     const workBookSheets = workBook.SheetNames;

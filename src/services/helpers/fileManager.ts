@@ -25,7 +25,6 @@ export const uploadFile = async (path: string) => {
 /**
  *
  * @param users -Array de objetos que contiene los usuarios.
- * @returns 
  */
 export const exportFile = async (users: Partial<IUserExport>[]) => {
   try {
@@ -41,11 +40,10 @@ export const exportFile = async (users: Partial<IUserExport>[]) => {
   }
 };
 /**
- *
+ * Se pasan como variables de entorno los parámetros debido a que en el modelo utilizado como ejemplo los usuarios no poseen email.
  * @param api_key -  Se lo pasa como variable de entorno y especifica la key generada en sendgrid para poder utilizar su servicio.
  * @param sender - Se lo pasa como variable de entorno y especifica quién es el emisor del email.
  * @param subject - Se lo pasa como variable de entorno y especifica a quién se enviará el email.
- * @param subject - El directorio donde se encuentra el archivo excel generado para ser enviado.
  * @returns Se retorna un booleando con el valor true en caso de que el envío del email haya sido exitoso.
  */
 const sendEmail = async () => {
