@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 import { userModel } from "../db/models/index";
 import ErrorCreator from "./helpers/errorCreator";
 import { IUser, IUserCarga, IUserExport } from "../interfaces/IUser";
-import { exportCsv } from "./helpers/uploader";
+import { exportFile } from "./helpers/uploader";
 
 /**
  * @param path  De la Request se obtiene el objeto file generado por el middleware multer en el cual una de sus key
@@ -88,7 +88,7 @@ export const exportUsers = async () => {
         edad: age,
       });
     });
-    await exportCsv(usersExport);
+    await exportFile(usersExport);
     return {
       message:
         "Email enviado con éxito, por favor controle su bandeja de entrada",
@@ -142,6 +142,12 @@ export const update = async (id: string, data: Partial<IUser>) => {
       data,
       { new: true }
     );
+    if (!update) {
+      throw new ErrorCreator(
+        "Se produjo un error al actualizar el usuario, verifique la información ingresada.",
+        400
+      );
+    }
     return update;
   } catch (error) {
     throw error;
@@ -160,7 +166,7 @@ export const deleteUser = async (id: string) => {
     if (!update) {
       throw new ErrorCreator(
         "No se puedo eliminar el usuario, verifique los datos ingresados por favor",
-        404
+        400
       );
     }
     return { message: "Usuario eliminado con éxito" };

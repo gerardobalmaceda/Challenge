@@ -18,7 +18,7 @@ const UserSchema = new Schema<IUser>(
       enum: ["Gerente", "Supervisor", "Representante"],
     },
 
-    dniJefe: { type: Number, ref: 'User' },
+    dniJefe: { type: Number },
     gerencia: { type: String },
     sector: { type: String },
   },

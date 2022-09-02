@@ -26,7 +26,7 @@ export const upalodCvs = async (path: string) => {
  * @param users -Array de objetos que contiene los usuarios.
  * @returns 
  */
-export const exportCsv = async (users: Object[]) => {
+export const exportFile = async (users: Object[]) => {
   try {
     const workSheet = XLSX.utils.json_to_sheet(users);
     const workBook = XLSX.utils.book_new();
