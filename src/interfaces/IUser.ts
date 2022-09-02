@@ -12,7 +12,7 @@ export interface IUser extends Document {
   superior: IUser[];
 }
 
-export interface IUserCarga {
+export interface IUserUpload {
   Nombre: string;
   Apellido: string;
   Legajo: string;
