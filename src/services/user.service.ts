@@ -2,7 +2,7 @@ import XLSX from "xlsx";
 import mongoose from "mongoose";
 import { userModel } from "../db/models/index";
 import ErrorCreator from "./helpers/errorCreator";
-import { IUser } from "../interfaces/IUser";
+import { IUser, IUserCarga, IUserExport } from "../interfaces/IUser";
 import { exportCsv } from "./helpers/uploader";
 
 /**
@@ -10,7 +10,7 @@ import { exportCsv } from "./helpers/uploader";
  * contiene la ubicación del archivo subido.
  * @return Array de objetos con los usuarios insertados en la base de datos a partir del excel.
  */
-export const upalodCvs = async (path: string) => {
+export const upalodCsv = async (path: string) => {
   try {
     const workBook = XLSX.readFile(path);
     const workBookSheets = workBook.SheetNames;
@@ -18,33 +18,21 @@ export const upalodCvs = async (path: string) => {
       workBook.Sheets[workBookSheets[0]],
       { raw: false }
     )) as any;
-    let dataToInsert: Object[] = [];
-    dataExcel.forEach(
-      (element: {
-        Nombre: String;
-        Apellido: String;
-        Legajo: String;
-        DNI: number;
-        Rol: String;
-        Gerencia: String;
-        Sector: String;
-        "DNI Jefe": String;
-        "Fecha cumpleaños": String;
-      }) => {
-        dataToInsert.push({
-          nombre: element.Nombre,
-          apellido: element.Apellido,
-          legajo: element.Legajo,
-          dni: element.DNI,
-          gerencia: element.Gerencia,
-          rol: element.Rol,
-          dniJefe: element["DNI Jefe"],
-          nacimiento: element["Fecha cumpleaños"],
-          sector: element.Sector,
-        });
-      }
-    );
-    const data = await userModel.insertMany(dataToInsert);
+    let users: Partial<IUser>[] = [];
+    dataExcel.forEach((user: IUserCarga) => {
+      users.push({
+        nombre: user.Nombre,
+        apellido: user.Apellido,
+        legajo: user.Legajo,
+        dni: user.DNI,
+        gerencia: user.Gerencia,
+        rol: user.Rol,
+        dniJefe: user["DNI Jefe"],
+        nacimiento: user["Fecha cumpleaños"],
+        sector: user.Sector,
+      });
+    });
+    const data = await userModel.insertMany(users);
     if (!data) {
       throw new ErrorCreator(
         "Se produjo un error durante la carga, intentelo nuevamente por favor",
@@ -62,35 +50,49 @@ export const upalodCvs = async (path: string) => {
  */
 export const exportUsers = async () => {
   try {
-    const users = await userModel.find();
-    let dataToReturn: Object[] = [];
+    const users = await userModel.aggregate([
+      {
+        $lookup: {
+          from: userModel.collection.name,
+          localField: "dniJefe",
+          foreignField: "dni",
+          as: "superior",
+        },
+      },
+    ]);
+    let usersExport: Partial<IUserExport>[] = [];
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
     users.forEach((user: Partial<IUser>) => {
-      const date = new Date();
-      const year = date.getFullYear();
-      const month = date.getMonth() + 1;
-      const day = date.getDate();
-      const birtdayYear = user.nacimiento.split("/");
-      let age = year - parseInt(birtdayYear[2]);
-      var birthDayMont = month - parseInt(birtdayYear[1]);
+      const birthday = user.nacimiento.split("/");
+      let age = year - parseInt(birthday[2]);
+      var birthDayMonth = month - parseInt(birthday[1]);
 
       if (
-        birthDayMont < 0 ||
-        (birthDayMont === 0 && day < parseInt(birtdayYear[0]))
+        birthDayMonth < 0 ||
+        (birthDayMonth === 0 && day < parseInt(birthday[0]))
       ) {
         age--;
       }
-      dataToReturn.push({
+     
+      usersExport.push({
         "Apellido y Nombre": `${user.nombre} ${user.apellido}`,
         legajo: user.legajo,
         dni: user.dni,
         rol: user.rol,
+        "Superior inmediato": `${user.superior[0]?.nombre || ''} ${user.superior[0]?.apellido || ''}`,
         gerencia: user.gerencia,
         sector: user.sector,
         edad: age,
       });
     });
-    await exportCsv(dataToReturn);
-    return "Email enviado con éxito, por favor controle su bandeja de entrada";
+    await exportCsv(usersExport);
+    return {
+      message:
+        "Email enviado con éxito, por favor controle su bandeja de entrada",
+    };
   } catch (error) {
     throw error;
   }
@@ -116,7 +118,7 @@ export const create = async (data: Partial<IUser>) => {
 };
 
 /**
- * 
+ *
  * @return Array de objetos con los usuarios existentes en la base de datos.
  */
 export const getAll = async () => {
@@ -148,7 +150,7 @@ export const update = async (id: string, data: Partial<IUser>) => {
 
 /**
  * @param id Mongo Id del usuario a actualizar.
- * @returns Mensaje de éxito en caso de no haberse producido ningún error. 
+ * @returns Mensaje de éxito en caso de no haberse producido ningún error.
  */
 export const deleteUser = async (id: string) => {
   try {
@@ -161,7 +163,7 @@ export const deleteUser = async (id: string) => {
         404
       );
     }
-    return "Usuario eliminado con éxito";
+    return { message: "Usuario eliminado con éxito" };
   } catch (error) {
     throw error;
   }

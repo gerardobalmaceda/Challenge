@@ -14,7 +14,7 @@ export const uploadCsv = async (
   next: NextFunction
 ) => {
   try {
-    const data = await UserServices.upalodCvs(req.file.path);
+    const data = await UserServices.upalodCsv(req.file.path);
     res.status(201).json(data);
   } catch (error) {
     next(error);
@@ -102,7 +102,7 @@ export const deleteUser = async (
 ) => {
   try {
     const data = await UserServices.deleteUser(req.params.id);
-    res.status(200).json({ data });
+    res.status(200).json(data);
   } catch (error) {
     next(error);
   }
