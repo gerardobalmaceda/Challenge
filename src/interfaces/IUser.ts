@@ -9,4 +9,28 @@ export interface IUser extends Document {
   dniJefe: number;
   gerencia: string;
   sector: string;
+  superior: IUser[];
+}
+
+export interface IUserCarga {
+  Nombre: string;
+  Apellido: string;
+  Legajo: string;
+  DNI: number;
+  Rol: string;
+  Gerencia: string;
+  Sector: string;
+  "DNI Jefe": number;
+  "Fecha cumpleaños": string;
+}
+
+export interface IUserExport {
+  "Apellido y Nombre": string;
+  legajo: string;
+  dni: number;
+  rol: string;
+  gerencia: string;
+  sector: string;
+  edad: number;
+  "Superior inmediato": string;
 }
