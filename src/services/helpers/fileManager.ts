@@ -10,7 +10,7 @@ import { IUserExport } from "../../interfaces/IUser";
  * @return Array de objetos con los valores obtenidos del excel.
  */
 
-export const uploadFile = async (path: string) => {
+export const upload = async (path: string) => {
   try {
     const workBook = XLSX.readFile(path);
     const workBookSheets = workBook.SheetNames;
