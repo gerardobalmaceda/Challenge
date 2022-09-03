@@ -7,7 +7,6 @@ const UserSchema = new Schema<IUser>(
     apellido: { type: String },
     dni: { type: Number, unique: true },
     nacimiento: { type: String },
-    area: { type: String },
     legajo: {
       type: String,
       unique: true,
