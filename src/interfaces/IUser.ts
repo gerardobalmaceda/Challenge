@@ -4,7 +4,7 @@ export interface IUser extends Document {
   apellido: string;
   legajo: string;
   dni: number;
-  nacimiento: any;
+  nacimiento: string;
   rol: string;
   dniJefe: number;
   gerencia: string;

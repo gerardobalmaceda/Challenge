@@ -15,7 +15,8 @@ export const upload = async (path: string) => {
     const workBook = XLSX.readFile(path);
     const workBookSheets = workBook.SheetNames;
     const dataExcel = XLSX.utils.sheet_to_json(
-      workBook.Sheets[workBookSheets[0]]
+      workBook.Sheets[workBookSheets[0]],
+      { raw: false }
     );
     return dataExcel;
   } catch (error) {
