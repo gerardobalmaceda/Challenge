@@ -31,7 +31,8 @@ export const exportUsers = async (
   next: NextFunction
 ) => {
   try {
-    const data = await UserServices.exportUsers();
+    const dni = parseInt(req.params.dni);
+    const data = await UserServices.exportUsers(dni);
     res.status(200).json(data);
   } catch (error) {
     next(error);

@@ -3,7 +3,7 @@ import { Router } from "express";
 import { celebrate } from "celebrate";
 import { fileUploader } from "../../middlewares/uploader";
 import * as UserController from "../controllers/user.controller";
-import { id_mongo_params, user_schema } from "../validations";
+import { id_mongo_params, user_schema, dni_to_export } from "../validations";
 
 const route = Router();
 
@@ -36,13 +36,15 @@ export default (app: Router) => {
     UserController.deleteUser
   );
 
-  route.post(
-    "/upload-csv",
-    fileUploader.single("data"),
-    UserController.uploadFile
-  );
+  route.post("/upload", fileUploader.single("data"), UserController.uploadFile);
 
-  route.get("/export", UserController.exportUsers);
+  route.post(
+    "/export/:dni",
+    celebrate({
+      params: dni_to_export,
+    }),
+    UserController.exportUsers
+  );
 
   app.use(errors());
 };

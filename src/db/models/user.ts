@@ -26,5 +26,5 @@ const UserSchema = new Schema<IUser>(
     versionKey: false,
   }
 );
-
+UserSchema.index({ dni: 1, legajo: 1 })
 export default UserSchema;
