@@ -55,7 +55,7 @@
 
 <h3>Despliegue</h3>
 <ul>
-  <li>Para desplegar el proyecto en modo producción ejecute el comando <b>npm start</b>.</li>
+  <li>Para desplegar el proyecto en modo producción ejecute el comando <b>npm run start</b>.</li>
 </ul>
 
 <h3>Autor</h3>
