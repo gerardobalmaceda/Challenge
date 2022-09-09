@@ -167,24 +167,25 @@ export const update = async (id: string, data: Partial<IUser>) => {
     const validate = await userModel.findOne({
       $or: [{ dni: data.dni }, { legajo: data.legajo }],
     });
-    if (validate) {
+    if (validate._id == id) {
+      const update = await userModel.findByIdAndUpdate(
+        mongoose.Types.ObjectId(id),
+        data,
+        { new: true }
+      );
+      if (!update) {
+        throw new ErrorCreator(
+          "Se produjo un error al actualizar el usuario, verifique la información ingresada.",
+          400
+        );
+      }
+      return update;
+    } else {
       throw new ErrorCreator(
         "El Dni o legajo que intenta actualizar ya se encuentra asociado a otro usuario",
         400
       );
     }
-    const update = await userModel.findByIdAndUpdate(
-      mongoose.Types.ObjectId(id),
-      data,
-      { new: true }
-    );
-    if (!update) {
-      throw new ErrorCreator(
-        "Se produjo un error al actualizar el usuario, verifique la información ingresada.",
-        400
-      );
-    }
-    return update;
   } catch (error) {
     throw error;
   }
