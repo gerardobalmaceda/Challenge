@@ -5,4 +5,3 @@ export const userModel = connection.database.model<IUser & Document>(
   "User",
   UserSchema
 );
-userModel.createIndexes({ dni: 1, legajo: 1 });
