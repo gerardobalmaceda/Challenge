@@ -5,11 +5,10 @@ const UserSchema = new Schema<IUser>(
   {
     nombre: { type: String },
     apellido: { type: String },
-    dni: { type: Number, unique: true },
+    dni: { type: Number },
     nacimiento: { type: String },
     legajo: {
       type: String,
-      unique: true,
     },
     rol: {
       type: String,

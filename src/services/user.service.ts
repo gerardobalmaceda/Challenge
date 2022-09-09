@@ -10,32 +10,38 @@ import { exportFile, upload } from "./helpers/fileManager";
  * @return Array de objetos con los usuarios insertados en la base de datos a partir del excel.
  */
 export const uploadFile = async (path: string) => {
-  const session = await userModel.startSession();
   try {
     let users: Partial<IUser>[] = [];
-    let data: Partial<IUser & Document> [] = [];
-    const dataExcel = await upload(path) as any;
-    await session.withTransaction(async () => {
-      dataExcel.forEach((user: IUserUpload) => {
-        users.push({
-          nombre: user.Nombre,
-          apellido: user.Apellido,
-          legajo: user.Legajo,
-          dni: user.DNI,
-          gerencia: user.Gerencia,
-          rol: user.Rol,
-          dniJefe: user["DNI Jefe"],
-          nacimiento: user["Fecha cumpleaños"],
-          sector: user.Sector,
-        });
+    const dataExcel = (await upload(path)) as any;
+    await dataExcel.forEach(async (user: IUserUpload) => {
+      users.push({
+        nombre: user.Nombre,
+        apellido: user.Apellido,
+        legajo: user.Legajo,
+        dni: user.DNI,
+        gerencia: user.Gerencia,
+        rol: user.Rol,
+        dniJefe: user["DNI Jefe"],
+        nacimiento: user["Fecha cumpleaños"],
+        sector: user.Sector,
       });
-      data = await userModel.create(users, { session: session });
     });
-    return data;
+    users.forEach(async (user: Partial<IUser>) => {
+      const validate = await userModel.findOne({
+        $or: [{ dni: user.dni }, { legajo: user.legajo }],
+      });
+      if (validate) {
+        await userModel.findOneAndUpdate(
+          { $or: [{ dni: user.dni }, { legajo: user.legajo }] },
+          user
+        );
+      } else {
+        await userModel.create(user);
+      }
+    });
+    return users;
   } catch (error) {
     throw error;
-  } finally {
-    session.endSession();
   }
 };
 
@@ -121,14 +127,18 @@ export const exportUsers = async (dni: number) => {
  */
 export const create = async (data: Partial<IUser>) => {
   try {
-    const createUser = await userModel.create(data);
-    if (!createUser) {
+    const validate = await userModel.findOne({
+      $or: [{ dni: data.dni }, { legajo: data.legajo }],
+    });
+
+    if (validate) {
       throw new ErrorCreator(
-        "Se produjo un error al crear el usuario, intentelo nuevamente por favor.",
-        500
+        "El Dni o legajo ingresado ya se encuentra asociado a otro usuario",
+        400
       );
     }
-    return createUser;
+    const user = await userModel.create(data);
+    return user;
   } catch (error) {
     throw error;
   }
@@ -154,6 +164,15 @@ export const getAll = async () => {
  */
 export const update = async (id: string, data: Partial<IUser>) => {
   try {
+    const validate = await userModel.findOne({
+      $or: [{ dni: data.dni }, { legajo: data.legajo }],
+    });
+    if (validate) {
+      throw new ErrorCreator(
+        "El Dni o legajo que intenta actualizar ya se encuentra asociado a otro usuario",
+        400
+      );
+    }
     const update = await userModel.findByIdAndUpdate(
       mongoose.Types.ObjectId(id),
       data,
