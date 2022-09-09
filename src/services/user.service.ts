@@ -12,7 +12,6 @@ import { exportFile, upload } from "./helpers/fileManager";
 export const uploadFile = async (path: string) => {
   const session = await userModel.startSession();
   try {
-    await userModel.createIndexes({ dni: 1, legajo: 1 });
     session.startTransaction();
     const dataExcel = (await upload(path)) as any;
     let users: Partial<IUser>[] = [];
@@ -33,7 +32,7 @@ export const uploadFile = async (path: string) => {
 
     await session.commitTransaction();
     await session.endSession();
-    
+     
     return data;
   } catch (error) {
     await session.abortTransaction();
@@ -124,7 +123,6 @@ export const exportUsers = async (dni: number) => {
  */
 export const create = async (data: Partial<IUser>) => {
   try {
-    await userModel.createIndexes({ dni: 1, legajo: 1 });
     const createUser = await userModel.create(data);
     if (!createUser) {
       throw new ErrorCreator(
