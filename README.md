@@ -22,7 +22,7 @@
 
 <h3>Ejecución en windows</h3>
 <p>Si trabaja en un ambiente de desarrollo con un sistema operativo Windows, tiene la posibilidad de ejecutar el comando npm run windows.</p>
-<p>El mismo ejectua un script el cual importa los entoros desde cross-env debido a que windows no soporta el comand export de dot-env.</p>
+<p>El mismo ejecuta un script el cual importa los entoros desde cross-env debido a que windows no soporta el comand export de dot-env.</p>
 
 <h3>Ejecución en linux</h3>
 <p>Para ejecutar el proyecto en modo desarrollo ingrese el comando npm run dev.</p>
