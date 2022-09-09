@@ -13,7 +13,7 @@ const ErrorHandler = (err: any) => {
     isInternal: true,
   };
   if (err.name === "BulkWriteError" || err.code === 11000) {
-    error.msg = `Verifique los datos ingresados. El DNI o legajo ya se encuentran asociados a otro usuario`;
+    error.msg = `Verifique los datos ingresados. DNI o legajo ya se encuentran asociados a otro usuario`;
     error.stCode = 400;
     error.isInternal = false;
   }
