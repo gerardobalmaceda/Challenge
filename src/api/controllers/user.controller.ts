@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
+import ErrorCreator from "../../services/helpers/errorCreator";
 import * as UserServices from "../../services/user.service";
-
 
 /**
  *
@@ -14,6 +14,9 @@ export const uploadFile = async (
   next: NextFunction
 ) => {
   try {
+    if (!req.file) {
+      throw new ErrorCreator("Debe de cargar un documento", 400);
+    }
     const data = await UserServices.uploadFile(req.file.path);
     res.status(201).json(data);
   } catch (error) {
@@ -31,7 +34,8 @@ export const exportUsers = async (
   next: NextFunction
 ) => {
   try {
-    const data = await UserServices.exportUsers();
+    const dni = parseInt(req.params.dni);
+    const data = await UserServices.exportUsers(dni);
     res.status(200).json(data);
   } catch (error) {
     next(error);

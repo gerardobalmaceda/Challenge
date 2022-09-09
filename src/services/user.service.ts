@@ -10,9 +10,11 @@ import { exportFile, upload } from "./helpers/fileManager";
  * @return Array de objetos con los usuarios insertados en la base de datos a partir del excel.
  */
 export const uploadFile = async (path: string) => {
+  const session = await userModel.startSession();
   try {
-   
-    const dataExcel = await upload(path) as any;
+    await userModel.createIndexes({ dni: 1, legajo: 1 });
+    session.startTransaction();
+    const dataExcel = (await upload(path)) as any;
     let users: Partial<IUser>[] = [];
     dataExcel.forEach((user: IUserUpload) => {
       users.push({
@@ -27,25 +29,38 @@ export const uploadFile = async (path: string) => {
         sector: user.Sector,
       });
     });
-    const data = await userModel.insertMany(users);
-    if (!data) {
-      throw new ErrorCreator(
-        "Se produjo un error durante la carga, intentelo nuevamente por favor",
-        500
-      );
-    }
+    const data = await userModel.create(users, { session: session });
+
+    await session.commitTransaction();
+    await session.endSession();
+    
     return data;
   } catch (error) {
+    await session.abortTransaction();
+    await session.endSession();
     throw error;
   }
 };
 
 /**
+ * @param dni Del usuario a exportar.
  * @return Mensaje de éxito en caso de no haberse producido ningún error.
  */
-export const exportUsers = async () => {
+export const exportUsers = async (dni: number) => {
   try {
     const users = await userModel.aggregate([
+      {
+        $match: {
+          $or: [
+            {
+              dniJefe: dni,
+            },
+            {
+              dni: dni,
+            },
+          ],
+        },
+      },
       {
         $lookup: {
           from: userModel.collection.name,
@@ -55,6 +70,12 @@ export const exportUsers = async () => {
         },
       },
     ]);
+    if (!users.length) {
+      throw new ErrorCreator(
+        "No se encontro ningún usuario con el dni ingresado",
+        400
+      );
+    }
     let usersExport: Partial<IUserExport>[] = [];
     const date = new Date();
     const year = date.getFullYear();
@@ -71,19 +92,23 @@ export const exportUsers = async () => {
       ) {
         age--;
       }
-     
+
       usersExport.push({
         "Apellido y Nombre": `${user.nombre} ${user.apellido}`,
         legajo: user.legajo,
         dni: user.dni,
         rol: user.rol,
-        "Superior inmediato": `${user.superior[0]?.nombre || ''} ${user.superior[0]?.apellido || ''}`,
+        "Superior inmediato": `${user.superior[0]?.nombre || ""} ${
+          user.superior[0]?.apellido || ""
+        }`,
         gerencia: user.gerencia,
         sector: user.sector,
         edad: age,
       });
     });
+
     await exportFile(usersExport);
+
     return {
       message:
         "Email enviado con éxito, por favor controle su bandeja de entrada",
@@ -99,6 +124,7 @@ export const exportUsers = async () => {
  */
 export const create = async (data: Partial<IUser>) => {
   try {
+    await userModel.createIndexes({ dni: 1, legajo: 1 });
     const createUser = await userModel.create(data);
     if (!createUser) {
       throw new ErrorCreator(

@@ -8,6 +8,10 @@ import { Joi } from "celebrate";
 export const id_mongo_params = Joi.object({
   id: Joi.string().min(24).max(24).required(),
 });
+export const dni_to_export = Joi.object({
+  dni: Joi.number().required(),
+});
+
 export const user_schema = Joi.object({
   nombre: Joi.string().required(),
   apellido: Joi.string().required(),
@@ -17,4 +21,6 @@ export const user_schema = Joi.object({
   rol: Joi.string().valid("Gerente", "Supervisor", "Representante").required(),
   nacimiento: Joi.string().required(),
   sector: Joi.string().required(),
+  dniJefe: Joi.number(),
 });
+
