@@ -167,7 +167,7 @@ export const update = async (id: string, data: Partial<IUser>) => {
     const validate = await userModel.findOne({
       $or: [{ dni: data.dni }, { legajo: data.legajo }],
     });
-    if (validate._id == id) {
+    if ((validate && validate._id == id) || !validate) {
       const update = await userModel.findByIdAndUpdate(
         mongoose.Types.ObjectId(id),
         data,
