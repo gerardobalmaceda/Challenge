@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { Document } from "mongoose";
 import { userModel } from "../db/models/index";
 import ErrorCreator from "./helpers/errorCreator";
 import { IUser, IUserUpload, IUserExport } from "../interfaces/IUser";
@@ -12,32 +12,30 @@ import { exportFile, upload } from "./helpers/fileManager";
 export const uploadFile = async (path: string) => {
   const session = await userModel.startSession();
   try {
-    session.startTransaction();
-    const dataExcel = (await upload(path)) as any;
     let users: Partial<IUser>[] = [];
-    dataExcel.forEach((user: IUserUpload) => {
-      users.push({
-        nombre: user.Nombre,
-        apellido: user.Apellido,
-        legajo: user.Legajo,
-        dni: user.DNI,
-        gerencia: user.Gerencia,
-        rol: user.Rol,
-        dniJefe: user["DNI Jefe"],
-        nacimiento: user["Fecha cumpleaños"],
-        sector: user.Sector,
+    let data: Partial<IUser & Document> [] = [];
+    const dataExcel = await upload(path) as any;
+    await session.withTransaction(async () => {
+      dataExcel.forEach((user: IUserUpload) => {
+        users.push({
+          nombre: user.Nombre,
+          apellido: user.Apellido,
+          legajo: user.Legajo,
+          dni: user.DNI,
+          gerencia: user.Gerencia,
+          rol: user.Rol,
+          dniJefe: user["DNI Jefe"],
+          nacimiento: user["Fecha cumpleaños"],
+          sector: user.Sector,
+        });
       });
+      data = await userModel.create(users, { session: session });
     });
-    const data = await userModel.create(users, { session: session });
-
-    await session.commitTransaction();
-    await session.endSession();
-     
     return data;
   } catch (error) {
-    await session.abortTransaction();
-    await session.endSession();
     throw error;
+  } finally {
+    session.endSession();
   }
 };
 
